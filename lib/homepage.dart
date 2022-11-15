@@ -1,5 +1,8 @@
+
+import 'package:flutter/foundation.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
+import 'package:shoes/category.dart';
 
 
 class homepage extends StatefulWidget{
@@ -13,6 +16,39 @@ class _homepageState extends State<homepage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+        title: Padding(
+          padding: EdgeInsets.only(left: 10),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(MediaQuery.of(context).size.width, 40),
+              primary: Color(0xEDEDEDED),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 0
+            ),
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => category()));
+              setState(() {
+                int pageIndex = 1;
+              });
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Search",style: TextStyle(color: Color(0xff171717)),),
+                Icon(Iconsax.search_normal_1, color: Color(0xff171717), size: 18,)
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          Padding(padding: EdgeInsets.only(right: 20), child: IconButton(onPressed: (){}, icon: Icon(Iconsax.notification,color: Colors.black,)),)
+        ],
+      ),
       body: ListView(
         padding: EdgeInsets.only(left: 25, right: 25, top: 15),
         children: [
@@ -262,6 +298,192 @@ class _homepageState extends State<homepage>{
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 5,),
+                            SizedBox(
+                              height: 30,
+                              child:  Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    "Nike",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        height: 2
+                                    ),
+                                  ),
+                                  IconButton(
+                                      onPressed: (){
+                                        setState(() {
+                                          if (like == false){
+                                            like = true;
+                                          }
+                                          else {
+                                            like = false;
+                                          }
+                                        });
+                                      },
+                                      icon: like == true
+                                          ? Icon(Iconsax.heart5, color: Colors.red, size: 20,)
+                                          : Icon(Iconsax.heart, size: 20)
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 5,),
+                            Text("Ultraboost 22", style: TextStyle(color: Color(0xff9c9c9c9c), height: 1), ),
+                            Text("Men's Running Shoes", style: TextStyle(color: Color(0xff9c9c9c9c),height: 1),),
+                            Text("Rp 3.300.000", style: TextStyle(color: Colors.red,height: 1.5), )
+
+                          ],
+                        ),
+
+                      )
+                    ],
+                  ),
+                ),
+                ClipRect(
+                  child: Column(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        decoration: BoxDecoration(
+                            color: Color(0xffededed)
+                        ),
+                        child: Image.asset('assets/7.png', fit: BoxFit.fitWidth,),
+                      ),
+                      Container(
+                        height:110,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(height: 5,),
+                            SizedBox(
+                              height: 30,
+                              child:  Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    "Nike",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        height: 2
+                                    ),
+                                  ),
+                                  IconButton(
+                                      onPressed: (){
+                                        setState(() {
+                                          if (like == false){
+                                            like = true;
+                                          }
+                                          else {
+                                            like = false;
+                                          }
+                                        });
+                                      },
+                                      icon: like == true
+                                          ? Icon(Iconsax.heart5, color: Colors.red, size: 20,)
+                                          : Icon(Iconsax.heart, size: 20)
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 5,),
+                            Text("Ultraboost 22", style: TextStyle(color: Color(0xff9c9c9c9c), height: 1), ),
+                            Text("Men's Running Shoes", style: TextStyle(color: Color(0xff9c9c9c9c),height: 1),),
+                            Text("Rp 3.300.000", style: TextStyle(color: Colors.red,height: 1.5), )
+
+                          ],
+                        ),
+
+                      )
+                    ],
+                  ),
+                ),
+                ClipRect(
+                  child: Column(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        decoration: BoxDecoration(
+                            color: Color(0xffededed)
+                        ),
+                        child: Image.asset('assets/7.png', fit: BoxFit.fitWidth,),
+                      ),
+                      Container(
+                        height:110,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(height: 5,),
+                            SizedBox(
+                              height: 30,
+                              child:  Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    "Nike",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        height: 2
+                                    ),
+                                  ),
+                                  IconButton(
+                                      onPressed: (){
+                                        setState(() {
+                                          if (like == false){
+                                            like = true;
+                                          }
+                                          else {
+                                            like = false;
+                                          }
+                                        });
+                                      },
+                                      icon: like == true
+                                          ? Icon(Iconsax.heart5, color: Colors.red, size: 20,)
+                                          : Icon(Iconsax.heart, size: 20)
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 5,),
+                            Text("Ultraboost 22", style: TextStyle(color: Color(0xff9c9c9c9c), height: 1), ),
+                            Text("Men's Running Shoes", style: TextStyle(color: Color(0xff9c9c9c9c),height: 1),),
+                            Text("Rp 3.300.000", style: TextStyle(color: Colors.red,height: 1.5), )
+
+                          ],
+                        ),
+
+                      )
+                    ],
+                  ),
+                ),
+                ClipRect(
+                  child: Column(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        decoration: BoxDecoration(
+                            color: Color(0xffededed)
+                        ),
+                        child: Image.asset('assets/7.png', fit: BoxFit.fitWidth,),
+                      ),
+                      Container(
+                        height:110,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             SizedBox(height: 5,),
                             SizedBox(
