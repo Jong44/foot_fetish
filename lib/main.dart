@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: pageIndex == 0
                   ? const Icon(Iconsax.home_15)
                   : const Icon(Iconsax.home),
-            label: "Home"
+            label: "Home",
           ),
           BottomNavigationBarItem(
               icon: pageIndex == 1

@@ -1,4 +1,5 @@
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,26 @@ class homepage extends StatefulWidget{
 
 class _homepageState extends State<homepage>{
   
-  bool like = false;
+  List like = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ];
+
+  List <int> harga = <int>[
+    1600000,
+    2000000,
+    2200000,
+    2400000,
+    2600000,
+    2600000,
+    2600000,
+    2600000,
+  ];
   
   @override
   Widget build(BuildContext context) {
@@ -52,54 +72,66 @@ class _homepageState extends State<homepage>{
       body: ListView(
         padding: EdgeInsets.only(left: 25, right: 25, top: 15),
         children: [
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(bottom: 20),
-            width: MediaQuery.of(context).size.width,
-            height: 186,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(
-                image: AssetImage('assets/5.png'),
-                fit: BoxFit.fill,
-                opacity: 100
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                    "SUPER BRAND WEEK",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
-                  ),
-                ),
-                SizedBox(height: 4,),
-                Text(
-                  "DISCOUNT UP TO 20% OFF",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                  ),
-                ),
-                SizedBox(height: 10,),
+          CarouselSlider(
+              items: [
                 Container(
-                  width: 215,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                      image: AssetImage('assets/6.png'),
-                      fit: BoxFit.fill
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(bottom: 20),
+                    width: MediaQuery.of(context).size.width,
+                    height: 186,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                          image: AssetImage('assets/5.png'),
+                          fit: BoxFit.fill,
+                          opacity: 100
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "SUPER BRAND WEEK",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        SizedBox(height: 4,),
+                        Text(
+                          "DISCOUNT UP TO 20% OFF",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                        SizedBox(height: 10,),
+                        Container(
+                          width: 215,
+                          height: 30,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                  image: AssetImage('assets/6.png'),
+                                  fit: BoxFit.fill
+                              )
+                          ),
+                        )
+                      ],
                     )
-                  ),
-                )
+                ),
               ],
-            )
+              options: CarouselOptions(
+                autoPlay: true,
+                enlargeCenterPage: true,
+                aspectRatio: 2.0,
+
+
+
+              )
           ),
           Text(
               "Feutured Brand",
@@ -210,7 +242,7 @@ class _homepageState extends State<homepage>{
           Container(
             margin: EdgeInsets.only(top: 15),
             height: MediaQuery.of(context).size.height,
-            child: GridView(
+            child: GridView.builder(
               physics: NeverScrollableScrollPhysics(),
               scrollDirection: Axis.vertical,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -219,132 +251,10 @@ class _homepageState extends State<homepage>{
                 mainAxisSpacing: 30,
                 mainAxisExtent: 210
               ),
-              children: [
-                ClipRect(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Color(0xffededed)
-                        ),
-                        child: Image.asset('assets/7.png', fit: BoxFit.fitWidth,),
-                      ),
-                      Container(
-                        height:110,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(height: 5,),
-                           SizedBox(
-                             height: 30,
-                             child:  Row(
-                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                               crossAxisAlignment: CrossAxisAlignment.center,
-                               children: [
-                                 const Text(
-                                   "Nike",
-                                   style: TextStyle(
-                                       fontWeight: FontWeight.bold,
-                                     fontSize: 15,
-                                     height: 2
-                                   ),
-                                 ),
-                                 IconButton(
-                                     onPressed: (){
-                                       setState(() {
-                                         if (like == false){
-                                           like = true;
-                                         }
-                                         else {
-                                           like = false;
-                                         }
-                                       });
-                                     },
-                                     icon: like == true
-                                         ? Icon(Iconsax.heart5, color: Colors.red, size: 20,)
-                                         : Icon(Iconsax.heart, size: 20)
-                                 )
-                               ],
-                             ),
-                           ),
-                            SizedBox(height: 5,),
-                            Text("Ultraboost 22", style: TextStyle(color: Color(0xff9c9c9c9c), height: 1), ),
-                            Text("Men's Running Shoes", style: TextStyle(color: Color(0xff9c9c9c9c),height: 1),),
-                            Text("Rp 3.300.000", style: TextStyle(color: Colors.red,height: 1.5), )
-
-                          ],
-                        ),
-
-                      )
-                    ],
-                  ),
-                ),
-                ClipRect(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Color(0xffededed)
-                        ),
-                        child: Image.asset('assets/7.png', fit: BoxFit.fitWidth,),
-                      ),
-                      Container(
-                        height:110,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 5,),
-                            SizedBox(
-                              height: 30,
-                              child:  Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    "Nike",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                        height: 2
-                                    ),
-                                  ),
-                                  IconButton(
-                                      onPressed: (){
-                                        setState(() {
-                                          if (like == false){
-                                            like = true;
-                                          }
-                                          else {
-                                            like = false;
-                                          }
-                                        });
-                                      },
-                                      icon: like == true
-                                          ? Icon(Iconsax.heart5, color: Colors.red, size: 20,)
-                                          : Icon(Iconsax.heart, size: 20)
-                                  )
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 5,),
-                            Text("Ultraboost 22", style: TextStyle(color: Color(0xff9c9c9c9c), height: 1), ),
-                            Text("Men's Running Shoes", style: TextStyle(color: Color(0xff9c9c9c9c),height: 1),),
-                            Text("Rp 3.300.000", style: TextStyle(color: Colors.red,height: 1.5), )
-
-                          ],
-                        ),
-
-                      )
-                    ],
-                  ),
-                ),
-                ClipRect(
+              itemCount: 6,
+              itemBuilder: (BuildContext context, int index)
+              {
+                return ClipRect(
                   child: Column(
                     children: [
                       Container(
@@ -379,15 +289,15 @@ class _homepageState extends State<homepage>{
                                   IconButton(
                                       onPressed: (){
                                         setState(() {
-                                          if (like == false){
-                                            like = true;
+                                          if (like[index] == false){
+                                            like[index] = true;
                                           }
                                           else {
-                                            like = false;
+                                            like[index] = false;
                                           }
                                         });
                                       },
-                                      icon: like == true
+                                      icon: like[index] == true
                                           ? Icon(Iconsax.heart5, color: Colors.red, size: 20,)
                                           : Icon(Iconsax.heart, size: 20)
                                   )
@@ -397,7 +307,7 @@ class _homepageState extends State<homepage>{
                             SizedBox(height: 5,),
                             Text("Ultraboost 22", style: TextStyle(color: Color(0xff9c9c9c9c), height: 1), ),
                             Text("Men's Running Shoes", style: TextStyle(color: Color(0xff9c9c9c9c),height: 1),),
-                            Text("Rp 3.300.000", style: TextStyle(color: Colors.red,height: 1.5), )
+                            Text("Rp " + harga[index].toString(), style: TextStyle(color: Colors.red,height: 1.5), )
 
                           ],
                         ),
@@ -405,195 +315,9 @@ class _homepageState extends State<homepage>{
                       )
                     ],
                   ),
-                ),
-                ClipRect(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Color(0xffededed)
-                        ),
-                        child: Image.asset('assets/7.png', fit: BoxFit.fitWidth,),
-                      ),
-                      Container(
-                        height:110,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(height: 5,),
-                            SizedBox(
-                              height: 30,
-                              child:  Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    "Nike",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                        height: 2
-                                    ),
-                                  ),
-                                  IconButton(
-                                      onPressed: (){
-                                        setState(() {
-                                          if (like == false){
-                                            like = true;
-                                          }
-                                          else {
-                                            like = false;
-                                          }
-                                        });
-                                      },
-                                      icon: like == true
-                                          ? Icon(Iconsax.heart5, color: Colors.red, size: 20,)
-                                          : Icon(Iconsax.heart, size: 20)
-                                  )
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 5,),
-                            Text("Ultraboost 22", style: TextStyle(color: Color(0xff9c9c9c9c), height: 1), ),
-                            Text("Men's Running Shoes", style: TextStyle(color: Color(0xff9c9c9c9c),height: 1),),
-                            Text("Rp 3.300.000", style: TextStyle(color: Colors.red,height: 1.5), )
+                );
+            },
 
-                          ],
-                        ),
-
-                      )
-                    ],
-                  ),
-                ),
-                ClipRect(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Color(0xffededed)
-                        ),
-                        child: Image.asset('assets/7.png', fit: BoxFit.fitWidth,),
-                      ),
-                      Container(
-                        height:110,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(height: 5,),
-                            SizedBox(
-                              height: 30,
-                              child:  Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    "Nike",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                        height: 2
-                                    ),
-                                  ),
-                                  IconButton(
-                                      onPressed: (){
-                                        setState(() {
-                                          if (like == false){
-                                            like = true;
-                                          }
-                                          else {
-                                            like = false;
-                                          }
-                                        });
-                                      },
-                                      icon: like == true
-                                          ? Icon(Iconsax.heart5, color: Colors.red, size: 20,)
-                                          : Icon(Iconsax.heart, size: 20)
-                                  )
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 5,),
-                            Text("Ultraboost 22", style: TextStyle(color: Color(0xff9c9c9c9c), height: 1), ),
-                            Text("Men's Running Shoes", style: TextStyle(color: Color(0xff9c9c9c9c),height: 1),),
-                            Text("Rp 3.300.000", style: TextStyle(color: Colors.red,height: 1.5), )
-
-                          ],
-                        ),
-
-                      )
-                    ],
-                  ),
-                ),
-                ClipRect(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Color(0xffededed)
-                        ),
-                        child: Image.asset('assets/7.png', fit: BoxFit.fitWidth,),
-                      ),
-                      Container(
-                        height:110,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(height: 5,),
-                            SizedBox(
-                              height: 30,
-                              child:  Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    "Nike",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                        height: 2
-                                    ),
-                                  ),
-                                  IconButton(
-                                      onPressed: (){
-                                        setState(() {
-                                          if (like == false){
-                                            like = true;
-                                          }
-                                          else {
-                                            like = false;
-                                          }
-                                        });
-                                      },
-                                      icon: like == true
-                                          ? Icon(Iconsax.heart5, color: Colors.red, size: 20,)
-                                          : Icon(Iconsax.heart, size: 20)
-                                  )
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 5,),
-                            Text("Ultraboost 22", style: TextStyle(color: Color(0xff9c9c9c9c), height: 1), ),
-                            Text("Men's Running Shoes", style: TextStyle(color: Color(0xff9c9c9c9c),height: 1),),
-                            Text("Rp 3.300.000", style: TextStyle(color: Colors.red,height: 1.5), )
-
-                          ],
-                        ),
-
-                      )
-                    ],
-                  ),
-                ),
-
-              ],
             ),
 
           )
