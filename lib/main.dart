@@ -6,6 +6,7 @@ import 'package:shoes/category.dart';
 import 'package:shoes/homepage.dart';
 import 'package:shoes/profile.dart';
 import 'package:shoes/wishlist.dart';
+import 'splash.dart';
 
 import 'cart.dart';
 
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
         
       ),
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Foot Fetish'),
+      home: splash(),
     );
   }
 }

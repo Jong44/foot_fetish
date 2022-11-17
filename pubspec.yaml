@@ -37,6 +37,11 @@ dependencies:
   iconsax: ^0.0.8
   rflutter_alert: ^2.0.4
   carousel_slider: ^4.1.1
+  image_picker: ^0.8.6
+  auto_size_text: ^3.0.0
+  dotted_border: ^2.0.0+3
+  modal_bottom_sheet: ^2.1.2
+  email_validator: ^2.1.17
 
 dev_dependencies:
   flutter_test:

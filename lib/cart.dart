@@ -9,21 +9,17 @@ class cart extends StatefulWidget{
 
 class _cartState extends State<cart>{
 
-  int cart0 = 1;
-  int cart1 = 1;
-  int cart2 = 1;
-  int cart3 = 1;
 
-  int subtotal = 0;
   int total = 0;
+  int subtotal = 0;
 
   int count = 4;
 
   List <int> cart = <int>[
-    1,
-    1,
-    1,
-    1
+    0,
+    0,
+    0,
+    0
   ];
 
 
@@ -34,6 +30,7 @@ class _cartState extends State<cart>{
     2400000,
     2600000,
   ];
+
 
   @override
   void setState(VoidCallback fn) {
@@ -79,9 +76,13 @@ class _cartState extends State<cart>{
     return;
   }
 
-  int jumlah = 0;
+  List jumlah = [
+    0,0,0,0,0
+  ];
 
   void updateHarga(){
+    subtotal = jumlah[1] + jumlah[2] + jumlah[3];
+    print(subtotal);
     total = subtotal + 20000;
   }
 
@@ -119,8 +120,8 @@ class _cartState extends State<cart>{
                 itemCount: count,
                 itemBuilder: (BuildContext context, int index)
                 {
-                  jumlah = harga[index] * cart[index];
-                  return               Container(
+                  jumlah[index] = harga[index] * cart[index];
+                  return Container(
                     height: 130,
                     child: Row(
                       children: [
@@ -155,7 +156,7 @@ class _cartState extends State<cart>{
                             children: [
                               Text("Adidas", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
                               Text("Retropy F2 Shoes", style: TextStyle(fontSize: 13, color: Color(0x9c9c9c9c), height: 1.6),),
-                              Text("Rp " + jumlah.toString(), style: TextStyle(fontSize: 13, color: Colors.red, height: 1.5, fontWeight: FontWeight.bold),),
+                              Text("Rp " + jumlah[index].toString(), style: TextStyle(fontSize: 13, color: Colors.red, height: 1.5, fontWeight: FontWeight.bold),),
                               SizedBox(height: 9,),
                               Container(
                                 width: 90,
@@ -168,7 +169,6 @@ class _cartState extends State<cart>{
                                     IconButton(
                                       onPressed: (){
                                         setState(() {
-
                                           if (cart[index] == 0 ){
                                             cart[index] == 0;
                                           }
