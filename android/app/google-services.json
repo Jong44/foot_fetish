@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1023095960523",
+    "firebase_url": "https://foot-fetish-9a250-default-rtdb.firebaseio.com",
+    "project_id": "foot-fetish-9a250",
+    "storage_bucket": "foot-fetish-9a250.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1023095960523:android:69f4461bd44ede3d73fc4e",
+        "android_client_info": {
+          "package_name": "com.example.shoes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1023095960523-bdq06f3emb8vn16o0hkk79mf5a3s2qfg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcbeSijbJTrNDuh7CH4w0ys5d7AIzUSKo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1023095960523-bdq06f3emb8vn16o0hkk79mf5a3s2qfg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
