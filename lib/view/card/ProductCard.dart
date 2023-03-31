@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -6,14 +8,43 @@ import '../../setting/format_rupiah.dart';
 import '../page/product_detail.dart';
 
 class ProductCard extends StatefulWidget {
-  final Product product;
-  const ProductCard({Key? key, required this.product}) : super(key: key);
-  State<ProductCard> createState() => _productCardState(product);
+  final image;
+  final nama_product;
+  final kategori;
+  final brand;
+  final harga;
+  final keys;
+
+  const ProductCard({Key? key, required this.image, required this.nama_product, required this.kategori, required this.brand, required this.harga, required this.keys, }) : super(key: key);
+  State<ProductCard> createState() => _productCardState(image, nama_product, kategori, brand, harga, keys);
 }
 
 class _productCardState extends State<ProductCard> {
-  final Product product;
-  _productCardState(this.product);
+  final image;
+  final nama_product;
+  final kategori;
+  final brand;
+  final harga;
+  final keys;
+
+
+
+  bool like = false;
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+
+  _productCardState(this.image, this.nama_product, this.kategori, this.brand, this.harga, this.keys);
+
+  Future<void> saveData() async {
+    await FirebaseDatabase.instance.ref().child('user').child(userId).child('wishlist').child(keys).set({
+      'nama_product': nama_product,
+      'harga': harga,
+      'jumlah': 1,
+      'images': image,
+      'brand' : brand,
+      'kategori': kategori
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +58,8 @@ class _productCardState extends State<ProductCard> {
             context,
             MaterialPageRoute(
                 builder: (context) => ProductDetail(
-                      product: product,
+                      keys: keys,
+
                     )));
       },
       child: Column(
@@ -41,7 +73,7 @@ class _productCardState extends State<ProductCard> {
                 Radius.circular(10.0),
               ),
             ),
-            child: Image.network(product.image!),
+            child: Image.network(image!),
           ),
           Container(
             height: 87,
@@ -55,7 +87,7 @@ class _productCardState extends State<ProductCard> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        product.brand!,
+                        brand!,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
@@ -67,9 +99,23 @@ class _productCardState extends State<ProductCard> {
                         child: IconButton(
                             padding: EdgeInsets.all(0.0),
                             onPressed: () {
-                              setState(() {});
+                              setState(() {
+                                if(like){
+                                  FirebaseDatabase.instance.ref().child('user').child(userId).child('wishlist').child(keys).remove();
+                                  like = false;
+                                }  else {
+                                  saveData();
+                                  like = true;
+                                }
+                              });
                             },
-                            icon: Icon(
+                            icon: like
+                                ? Icon(
+                              Iconsax.heart5,
+                              size: 18.0,
+                              color: Colors.red,
+                            )
+                            : Icon(
                               Iconsax.heart,
                               size: 18.0,
                             )),
@@ -78,17 +124,17 @@ class _productCardState extends State<ProductCard> {
                   ),
                 ),
                 Text(
-                  product.nama_produk!,
+                  nama_product!,
                   style: TextStyle(
                       color: Color(0xff9c9c9c9c), fontSize: 14, height: 1.3),
                 ),
                 Text(
-                  product.kategori!,
+                  kategori!,
                   style: TextStyle(
                       color: Color(0xff9c9c9c9c), fontSize: 14, height: 1.3),
                 ),
                 Text(
-                  CurrencyFormat.convertToIdr(product.harga!, 2),
+                  CurrencyFormat.convertToIdr(harga!, 2),
                   style: TextStyle(
                       color: Colors.red,
                       height: 1.5,

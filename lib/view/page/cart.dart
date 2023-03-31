@@ -1,6 +1,7 @@
 // import 'package:custom_pin_screen/custom_pin_screen.dart';
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/foundation.dart';
@@ -8,6 +9,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shoes/view/page/checkout.dart';
 import 'package:shoes/view/page/success_payment.dart';
 import 'package:shoes/view/pin/pin_authentication.dart';
 import 'package:shoes/view/pin/pin_code_field.dart';
@@ -20,21 +22,12 @@ class cart extends StatefulWidget {
 }
 
 class _cartState extends State<cart> {
-  final DatabaseCart = FirebaseDatabase.instance.ref().child('cart');
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+  final DatabaseCart = FirebaseDatabase.instance.ref().child('user');
 
   int total = 0;
-
   int subtotal = 0;
 
-  List<int> cart = <int>[0, 0, 0, 0];
-
-  List<int> harga = <int>[
-    1600000,
-    2000000,
-    2200000,
-    2400000,
-    2600000,
-  ];
 
   @override
   void setState(VoidCallback fn) {
@@ -78,7 +71,7 @@ class _cartState extends State<cart> {
         TextButton(
           child: Text('Iya'),
           onPressed: () {
-            DatabaseCart.child(key).remove();
+            DatabaseCart.child(userId).child('cart').child(key).remove();
             Navigator.of(context).pop();
           },
         ),
@@ -88,8 +81,6 @@ class _cartState extends State<cart> {
     showDialog(context: context, builder: (context) => alert);
     return;
   }
-
-  List jumlah = [0, 0, 0, 0, 0];
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +108,7 @@ class _cartState extends State<cart> {
                 margin: EdgeInsets.only(bottom: 10),
                 height: 410,
                 child: FirebaseAnimatedList(
-                  query: DatabaseCart,
+                  query: DatabaseCart.child(userId).child('cart'),
                   defaultChild: Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -131,7 +122,9 @@ class _cartState extends State<cart> {
                     var jumlah = cart['jumlah'];
                     var image = cart['image'];
                     var harga = cart['harga'];
-                    var totalHarga = harga * jumlah;
+                    int totalHarga = harga * jumlah;
+
+                    subtotal += totalHarga;
 
                     return Container(
                       height: 130,
@@ -210,13 +203,13 @@ class _cartState extends State<cart> {
                                             if (jumlah == 1) {
                                               alert(context, key: cart['key']);
                                             } else {
-                                              DatabaseCart.child(cart['key'])
+                                              DatabaseCart.child(userId).child('cart').child(cart['key'])
                                                   .child('jumlah')
                                                   .set(jumlah - 1);
                                             }
                                             setState(() {
                                               if (totalHarga != 0) {
-                                                subtotal = totalHarga - harga;
+                                                subtotal = totalHarga - harga as int;
                                               } else {
                                                 subtotal = 0;
                                               }
@@ -239,11 +232,11 @@ class _cartState extends State<cart> {
                                         height: 30,
                                         child: IconButton(
                                             onPressed: () {
-                                              DatabaseCart.child(cart['key'])
+                                              DatabaseCart.child(userId).child('cart').child(cart['key'])
                                                   .child('jumlah')
                                                   .set(jumlah + 1);
                                               setState(() {
-                                                subtotal = totalHarga + harga;
+                                                subtotal = totalHarga + harga as int;
                                               });
                                               updateTotal();
                                             },
@@ -363,55 +356,11 @@ class _cartState extends State<cart> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  showModalBottomSheet(
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      context: context,
-                      builder: (context) => Container(
-                            height: MediaQuery.of(context).size.height * 0.75,
-                            decoration: new BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: new BorderRadius.only(
-                                topLeft: const Radius.circular(25.0),
-                                topRight: const Radius.circular(25.0),
-                              ),
-                            ),
-                            child: PinAuthentication(
-                                onChanged: (v) {
-                                  if (kDebugMode) {
-                                    print(v);
-                                  }
-                                },
-                                pinTheme: PinTheme.defaults(
-                                    activeColor: Colors.grey,
-                                    activeFillColor: Colors.black,
-                                    inactiveFillColor: Colors.grey,
-                                    inactiveColor: Colors.grey,
-                                    shape: PinCodeFieldShape.underline,
-                                    selectedColor: Colors.black,
-                                    selectedFillColor: Colors.grey),
-                                onSpecialKeyTap: () {
-                                  if (kDebugMode) {
-                                    print('fingerprint');
-                                  }
-                                },
-                                specialKey: const SizedBox(),
-                                useFingerprint: true,
-                                onbuttonClick: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (builder) => Success()));
-                                },
-                                onCompleted: (v) {
-                                  if (kDebugMode) {
-                                    print('completed: $v');
-                                  }
-                                },
-                                submitLabel: const InkWell(
-                                  child: Text("Checkout"),
-                                )),
-                          ));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                      Checkout(
+                        subtotal: subtotal,
+                        total: total,
+                      )));
                 },
                 child: Text("Checkout"),
                 style: ElevatedButton.styleFrom(

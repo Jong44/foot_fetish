@@ -1,29 +1,47 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:shoes/core.dart';
+import 'package:shoes/setting/format_rupiah.dart';
 import 'package:shoes/view/page/homepage.dart';
 import 'package:shoes/main.dart';
 
 class Success extends StatefulWidget {
-  State<Success> createState() => _successState();
+  final payment;
+
+  final total;
+  const Success({super.key, required this.payment, required this.total});
+
+  State<Success> createState() => _successState(payment, total);
 }
 
 class _successState extends State<Success> {
   final fDatabase = FirebaseDatabase.instance;
+  final userId = FirebaseAuth.instance.currentUser!.uid;
   String? nama;
 
   bool isLoading = false;
+
+  final payment;
+  final total;
+
+  final paymentList = [
+    'BCA',
+    'Master Card'
+  ];
+
+  _successState(this.payment, this.total);
 
   Future<void> getData() async {
     setState(() {
       isLoading = true;
     });
 
-    var name = await fDatabase.ref().child('profile').child('name').get();
+    var name = await fDatabase.ref().child('user').child(userId).child('profile').child('name').get();
 
     setState(() {
       nama = name.value.toString();
@@ -171,7 +189,7 @@ class _successState extends State<Success> {
                         ),
                         Expanded(
                           child: Text(
-                            "BCA",
+                            paymentList[payment],
                             textAlign: TextAlign.end,
                             style: TextStyle(
                               fontSize: 14.0,
@@ -229,7 +247,7 @@ class _successState extends State<Success> {
                         ),
                         Expanded(
                           child: Text(
-                            "Rp1.620.000",
+                            CurrencyFormat.convertToIdr(total, 2).toString(),
                             textAlign: TextAlign.end,
                             style: TextStyle(
                               fontSize: 14.0,
@@ -291,7 +309,7 @@ class _successState extends State<Success> {
                         ),
                         Expanded(
                           child: Text(
-                            "Rp1.620.000",
+                            CurrencyFormat.convertToIdr(total, 2),
                             textAlign: TextAlign.end,
                             style: TextStyle(
                                 fontSize: 20.0,

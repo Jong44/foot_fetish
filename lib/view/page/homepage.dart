@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +25,19 @@ class homepage extends StatefulWidget {
 class _homepageState extends State<homepage> {
   late ProductService productService;
   late BrandService brandService;
-  late List<Product> products;
+
+  final ProductDatabase = FirebaseDatabase.instance.ref().child('public').child('product');
+  final BrandDatabase = FirebaseDatabase.instance.ref().child('public').child('brand');
+
+  List<dynamic> productList = [];
+  List<dynamic> keysProduct = [];
+
+  List<dynamic> brandList = [];
+  List<dynamic> keysBrand = [];
+
+
+
+
 
   Future refresh() async {
     await Future.delayed(Duration(seconds: 3));
@@ -41,7 +55,40 @@ class _homepageState extends State<homepage> {
     super.initState();
     productService = ProductService();
     brandService = BrandService();
+
+  //  Product
+    ProductDatabase.onValue.listen((event) {
+      setState(() {
+        productList.clear();
+        keysProduct.clear();
+        List<dynamic>? _productList = event.snapshot.value as List?;
+        if (_productList != null) {
+          _productList.asMap().forEach((index, value) {
+            keysProduct.add(index.toString());
+            productList.add(value);
+          });
+        }
+      });
+    });
+
+  //  Brand
+    BrandDatabase.onValue.listen((event) {
+      setState(() {
+        brandList.clear();
+        keysBrand.clear();
+        List<dynamic>? _brandList = event.snapshot.value as List?;
+        if (_brandList != null) {
+          _brandList.asMap().forEach((index, value) {
+            keysBrand.add(index.toString());
+            brandList.add(value);
+          });
+        }
+      });
+    });
+
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -169,25 +216,53 @@ class _homepageState extends State<homepage> {
                   margin: EdgeInsets.only(bottom: 15),
                   width: MediaQuery.of(context).size.width,
                   height: 130,
-                  child: FutureBuilder(
-                    future: brandService.getBrand(),
-                    builder: (BuildContext context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text(
-                              "Something wrong with message:${snapshot.error.toString()}"),
+                  child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          crossAxisSpacing: 5,
+                          mainAxisSpacing: 0,
+                          mainAxisExtent: 85),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: brandList.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => brandprofile(
+                                    keys: keysBrand[index],
+                                  ))),
+                          child: Container(
+                              alignment: Alignment.center,
+                              width: 72,
+                              height: 150,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.symmetric(vertical: 15),
+                                    alignment: Alignment.center,
+                                    width: 72,
+                                    height: 72,
+                                    decoration: BoxDecoration(
+                                        color: Color(0xffededed),
+                                        borderRadius: BorderRadius.circular(10)),
+                                    child: Image.network(
+                                      brandList[index]['logo'],
+                                      fit: BoxFit.contain,
+                                      width: 40,
+                                      height: 40,
+                                      alignment: Alignment.center,
+                                    ),
+                                  ),
+                                  Text(
+                                    brandList[index]['brand'],
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                              )),
                         );
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.done) {
-                        List<Brand>? brands = snapshot.data as List<Brand>;
-                        return _brandLisst(brands!);
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    },
-                  )),
+                      })),
               Text(
                 "Popular Product",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -195,110 +270,29 @@ class _homepageState extends State<homepage> {
               Container(
                   margin: EdgeInsets.only(top: 15),
                   height: MediaQuery.of(context).size.height,
-                  child: FutureBuilder(
-                    future: productService.getProduct(),
-                    builder: (BuildContext context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text(
-                              "Something wrong with message:${snapshot.error.toString()}"),
-                        );
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.done) {
-                        List<Product>? products =
-                            snapshot.data as List<Product>;
-
-                        return _productList(products!);
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
+                  child: GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 10,
+                        mainAxisExtent: 235),
+                    itemCount: productList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ProductCard(
+                        image: productList[index]['image'],
+                        nama_product: productList[index]['nama_product'],
+                        kategori: productList[index]['kategori'],
+                        brand: productList[index]['brand'],
+                        harga: productList[index]['harga'],
+                        keys: keysProduct[index].toString(),
+                      );
                     },
-                  ))
+                  ),
+              )
             ],
           ),
         ));
-  }
-
-  Widget _productList(List<Product> products) {
-    return GridView.builder(
-      physics: NeverScrollableScrollPhysics(),
-      scrollDirection: Axis.vertical,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 5,
-          mainAxisSpacing: 10,
-          mainAxisExtent: 235),
-      itemCount: products.length,
-      itemBuilder: (BuildContext context, int index) {
-        Product product = products![index];
-        return ProductCard(
-            product: Product(
-                id_product: product.id_product,
-                id_brand: product.id_brand,
-                id_kategori: product.id_kategori,
-                nama_produk: product.nama_produk,
-                harga: product.harga,
-                brand: product.brand,
-                kategori: product.kategori,
-                description: product.description,
-                sold: product.sold,
-                rate: product.rate,
-                review: product.review,
-                image: product.image,
-                brands: product.brands,
-                foto: product.foto));
-      },
-    );
-  }
-
-  Widget _brandLisst(List<Brand> brands) {
-    return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 1,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 0,
-            mainAxisExtent: 85),
-        scrollDirection: Axis.horizontal,
-        itemCount: brands.length,
-        itemBuilder: (context, index) {
-          Brand brand = brands[index];
-          return InkWell(
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => brandprofile(brand: brand))),
-            child: Container(
-                alignment: Alignment.center,
-                width: 72,
-                height: 150,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 15),
-                      alignment: Alignment.center,
-                      width: 72,
-                      height: 72,
-                      decoration: BoxDecoration(
-                          color: Color(0xffededed),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Image.network(
-                        brand.logo!,
-                        fit: BoxFit.contain,
-                        width: 40,
-                        height: 40,
-                        alignment: Alignment.center,
-                      ),
-                    ),
-                    Text(
-                      brand.brand!,
-                      textAlign: TextAlign.center,
-                    )
-                  ],
-                )),
-          );
-        });
   }
 }

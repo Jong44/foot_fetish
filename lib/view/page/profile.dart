@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoes/view/page/address.dart';
+import 'package:path/path.dart';
 
 import '../../model/auth/login.dart';
 
@@ -16,14 +17,20 @@ class profile extends StatefulWidget {
 }
 
 class _profileState extends State<profile> {
+
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+
   File? image;
   var namaController = TextEditingController();
   var emailController = TextEditingController();
   var phoneController = TextEditingController();
+  var genderController = TextEditingController();
+
   List listGender = [
     "Laki - Laki",
     "Perempuan",
   ];
+
   var gender;
 
   final fDatabase = FirebaseDatabase.instance;
@@ -70,6 +77,8 @@ class _profileState extends State<profile> {
           onPressed: () {
             fDatabase
                 .reference()
+                .child('user')
+                .child(userId)
                 .child('profile')
                 .child('name')
                 .set(namaController.text);
@@ -119,6 +128,8 @@ class _profileState extends State<profile> {
           onPressed: () {
             fDatabase
                 .reference()
+                .child('user')
+                .child(userId)
                 .child('profile')
                 .child('email')
                 .set(emailController.text);
@@ -167,6 +178,8 @@ class _profileState extends State<profile> {
           onPressed: () {
             fDatabase
                 .reference()
+                .child('user')
+                .child(userId)
                 .child('profile')
                 .child('phone')
                 .set(phoneController.text);
@@ -188,31 +201,91 @@ class _profileState extends State<profile> {
     return;
   }
 
+  void genderAlert(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+      actionsAlignment: MainAxisAlignment.center,
+      actionsPadding: EdgeInsets.symmetric(horizontal: 15),
+      title: Text("Gender"),
+      content: TextFormField(
+        controller: genderController,
+        textInputAction: TextInputAction.newline,
+        maxLines: 1,
+        decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          hintText: "Masukkan Gender",
+          hintStyle: TextStyle(color: Colors.grey.shade300),
+        ),
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            fDatabase
+                .reference()
+                .child('user')
+                .child(userId)
+                .child('profile')
+                .child('gender')
+                .set(genderController.text);
+            setState(() {
+              genders = genderController.text;
+            });
+            Navigator.pop(context);
+          },
+          child: Text("Simpan"),
+          style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              fixedSize: Size(MediaQuery.of(context).size.width, 20)),
+        )
+      ],
+    );
+
+    showDialog(context: context, builder: (context) => alert);
+    return;
+  }
+
   Future openCamera() async {
     final pickedImage =
         await ImagePicker().pickImage(source: ImageSource.camera);
     image = File(pickedImage!.path);
+    setState(() {
+      image = File(pickedImage!.path);
+    });
+    uploadFotoProfile();
   }
 
   Future openGaleri() async {
     final pickedImage =
         await ImagePicker().pickImage(source: ImageSource.gallery);
-    image = File(pickedImage!.path);
+    setState(() {
+      image = File(pickedImage!.path);
+    });
+    uploadFotoProfile();
+  }
+
+  Future uploadFotoProfile() async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    String fileName = basename(image!.path);
+    await FirebaseStorage.instance.ref()
+        .child('profile/$userId/$fileName')
+        .putFile(image!);
+    var url = await FirebaseStorage.instance.ref().child(
+        'profile/$userId/$fileName').getDownloadURL();
+    setState(() {
+      img_url = url.toString();
+    });
+
+    await FirebaseDatabase.instance.ref().child('user').child(userId).child('profile').child('images').set(img_url);
   }
 
   var currentUser = FirebaseAuth.instance.currentUser;
-
-  // Future resetEmail(String newEmail) async {
-  //   var message;
-  //   User firebaseUser = await fAuth.currentUser();
-  //   firebaseUser
-  //       .updateEmail(newEmail)
-  //       .then(
-  //         (value) => message = 'Success',
-  //       )
-  //       .catchError((onError) => message = 'error');
-  //   return message;
-  // }
 
   @override
   void setState(VoidCallback fn) {
@@ -224,6 +297,7 @@ class _profileState extends State<profile> {
   String? nama;
   String? phones;
   String? emails;
+  String? img_url;
 
   bool isLoading = false;
 
@@ -232,17 +306,18 @@ class _profileState extends State<profile> {
       isLoading = true;
     });
 
-    var name = await fDatabase.ref().child('profile').child('name').get();
-    var gender = await fDatabase.ref().child('profile').child('gender').get();
-    var email = await fDatabase.ref().child('profile').child('email').get();
-    var phone = await fDatabase.ref().child('profile').child('phone').get();
+    var name = await fDatabase.ref().child('user').child(userId).child('profile').child('name').get();
+    var gender = await fDatabase.ref().child('user').child(userId).child('profile').child('gender').get();
+    var email = await fDatabase.ref().child('user').child(userId).child('profile').child('email').get();
+    var phone = await fDatabase.ref().child('user').child(userId).child('profile').child('phone').get();
     var image_profile =
-        await fDatabase.ref().child('profile').child('image_profile').get();
+        await fDatabase.ref().child('user').child(userId).child('profile').child('images').get();
 
     setState(() {
       nama = name.value.toString();
       emails = email.value.toString();
       phones = phone.value.toString();
+      img_url = image_profile.value.toString();
     });
 
     setState(() {
@@ -260,18 +335,6 @@ class _profileState extends State<profile> {
         elevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
-        leading: Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Iconsax.arrow_left,
-              color: Colors.black,
-            ),
-          ),
-        ),
         centerTitle: true,
         title: Text("Profile",
             style: TextStyle(
@@ -310,7 +373,8 @@ class _profileState extends State<profile> {
                             height: 100,
                             child: CircleAvatar(
                               radius: 50,
-                              backgroundImage: AssetImage('assets/8.png'),
+                              backgroundImage: NetworkImage(img_url ?? "https://firebasestorage.googleapis.com/v0/b/foot-fetish-9a250.appspot.com/o/defaults%2F%E2%80%94Pngtree%E2%80%94profile%20line%20black%20icon_4008141.png?alt=media&token=a2dc0daa-7b29-4eac-a014-e0985bb847ce"),
+                              backgroundColor: Colors.grey,
                             ),
                           ),
                     Container(
@@ -450,7 +514,9 @@ class _profileState extends State<profile> {
                                   style: TextStyle(fontSize: 15),
                                 ),
                                 IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      genderAlert(context);
+                                    },
                                     icon: Icon(
                                       CupertinoIcons.right_chevron,
                                       size: 15,
