@@ -35,8 +35,10 @@ class _categoryState extends State<category>{
         List<dynamic>? _productList = event.snapshot.value as List?;
         if (_productList != null) {
           _productList.asMap().forEach((index, value) {
-            keysProduct.add(index.toString());
-            productList.add(value);
+            if(value != null){
+              keysProduct.add(index.toString());
+              productList.add(value);
+            }
           });
         }
         searchProduct = List.from(productList);

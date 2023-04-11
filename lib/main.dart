@@ -8,8 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:shoes/service/BrandService.dart';
-import 'package:shoes/service/ProductService.dart';
 import 'package:shoes/view/page/category.dart';
 import 'package:shoes/view/page/homepage.dart';
 import 'package:shoes/view/page/profile.dart';

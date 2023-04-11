@@ -4,6 +4,7 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shoes/service/CartItem.dart';
 import 'package:shoes/view/page/success_payment.dart';
 
 import '../../setting/format_rupiah.dart';
@@ -14,21 +15,56 @@ import 'address.dart';
 class Checkout extends StatefulWidget {
   final subtotal;
   final total;
+  final keys;
+  final jumlah;
 
-  const Checkout({Key? key, required this.subtotal, required this.total}) : super(key: key);
+  const Checkout({Key? key, required this.subtotal, required this.total, required this.keys, required this.jumlah}) : super(key: key);
 
   @override
-  State<Checkout> createState() => _CheckoutState(subtotal, total);
+  State<Checkout> createState() => _CheckoutState(subtotal, total, keys, jumlah);
 }
 
 class _CheckoutState extends State<Checkout> {
   final subtotal;
   final total;
+  final jumlah;
+  final keys;
   final userId = FirebaseAuth.instance.currentUser!.uid;
 
-  _CheckoutState(this.subtotal, this.total);
+  _CheckoutState(this.subtotal, this.total, this.jumlah, this.keys);
 
   int indexPayment = 0;
+
+  Future<void> updateJumlah(List<String> keys, List<CartItem> jumlah) async {
+
+    int sold;
+
+    if (keys.length != jumlah.length) {
+      throw ArgumentError('Length of keys and jumlah must be the same');
+    }
+
+
+    for (int i = 0; i < keys.length; i++) {
+      var soldSnapshot = await FirebaseDatabase.instance.ref()
+          .child('public')
+          .child('product')
+          .child(keys[i])
+          .child('sold').once();
+
+      sold = int.parse(soldSnapshot.snapshot.value.toString());
+
+      await FirebaseDatabase.instance
+          .ref()
+          .child('public')
+          .child('product')
+          .child(keys[i])
+          .child('sold')
+          .set(sold + jumlah[i].jumlah!);
+    }
+
+    print('Update jumlah successful');
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +362,8 @@ class _CheckoutState extends State<Checkout> {
                           },
                           specialKey: const SizedBox(),
                           useFingerprint: true,
-                          onbuttonClick: () {
+                          onbuttonClick: () async {
+                            await FirebaseDatabase.instance.ref().child('user').child(userId).child('cart').remove();
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

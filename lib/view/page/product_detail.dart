@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:shoes/model/api/Product.dart';
 import 'package:shoes/setting/format_rupiah.dart';
 import 'package:shoes/view/page/cart.dart';
 import 'package:shoes/view/page/checkout.dart';
@@ -110,7 +109,7 @@ class _detailState extends State<ProductDetail>{
   Future<void> saveCart(size) async{
     await fDatabase.ref().child('user').child(userId).child('cart').child(keys).set({
       'nama_product': nama_product,
-      'ukuran' : size,
+      'ukuran' : int.parse(size),
       'harga': int.parse(harga!),
       'jumlah': 1,
       'image': image,
@@ -487,6 +486,8 @@ class _detailState extends State<ProductDetail>{
                         Checkout(
                           subtotal: int.parse(harga!),
                           total: int.parse(harga!),
+                          jumlah: 1,
+                          keys: keys,
                         )));
                   },
                   child: Text("Buy Now", style: TextStyle(color: Colors.white),)

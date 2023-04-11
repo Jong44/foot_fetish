@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-
-import '../../model/api/Product.dart';
 import '../../setting/format_rupiah.dart';
 import '../page/product_detail.dart';
 
